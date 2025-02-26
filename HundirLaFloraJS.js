@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let barcosRojos = [];
     let contadorAmarillo = 0;
     
+
     //Creamos el tablero
     for (let fila = 0; fila < 10; fila++) {
         for (let col = 0; col < 10; col++) {
@@ -62,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
     botonIniciar.addEventListener('click', function() {
         faseColocacion = false;
         alert('Amarillo, es tu momento. Hora de acabar con los rojos!');
-    
         // Restauramos el estado de los botones
         const botones = document.querySelectorAll('.boton');
         botones.forEach(boton => {
@@ -80,5 +80,5 @@ function colocarBarcos(){
 
 //Comprobar si en esa posicion hay barco
 function comprobarCelda(){
-
+    
 }
