@@ -13,6 +13,12 @@ Selecciona una celda y activamos funcion comprobarCelda() comprobamos el array b
 Por cada click añadimos al contador 
 */
 
+/*
+Mensajes de cantidad de barcos que quedan por poner/hundir(dependiendo de si faseColocacion = true o = false)
+(Turno rojo) Metodo para detectar cuando termia de colocar el barco colocarBarco() (El orden lo establecemos nosotros) utilizando el mensaje anterior indicamos que tipo de barco va a colocar
+(Turno amarillo) Metodo para detectar si el barco está hundido o tocado comprobarCelda() (hundido todos de color rojo, tocado de color naranja)
+*/
+
 document.addEventListener('DOMContentLoaded', function() {
     const tablero = document.getElementById('tablero');
     let botonIniciar = document.getElementById('iniciarJuego');
@@ -55,6 +61,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.disabled = true;
                     console.log('Barcos Rojos:', barcosRojos);
                 }
+            }else{//Estamos en el turno amarillo
+                comprobarCelda(barcosRojos,boton);
+                contadorAmarillo++;
             }
         });
     });
@@ -69,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
             boton.disabled = false; // Reactivamos el botón
             boton.style.backgroundColor = ''; // Restablecemos el color de fondo
         });
+        //Modificamos la informacion amarillo
+        const infoAmarillo = document.getElementById("turnosAmarillo");
+
     });
 });
 
@@ -79,6 +91,14 @@ function colocarBarcos(){
 
 
 //Comprobar si en esa posicion hay barco
-function comprobarCelda(){
-    
+function comprobarCelda(barcosRojos,boton){
+    const posicion = boton.getAttribute('posicion');
+    if (barcosRojos.includes(posicion)) { 
+        //marcar la celda
+        boton.style.backgroundColor = 'orange';
+        boton.disabled = true;
+    }else{
+        boton.style.backgroundColor = 'blue';
+        boton.disabled = true;
+    }
 }
