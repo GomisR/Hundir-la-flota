@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!barcosRojos.includes(posicion)) { 
                     //Añadir al array y marcar la celda
                     barcosRojos.push(posicion);
+                    colocarBarcos(2, tablero);
                     this.style.backgroundColor = 'red';
                     this.disabled = true;
                     console.log('Barcos Rojos:', barcosRojos);
@@ -72,10 +73,54 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-//Gestionar los clicks (por celda) para colocar barcos en su posicion
-function colocarBarcos(){
+function colocarBarcos(longitud, tablero) {
+    let seleccionados = []; // Guardará las posiciones del barco en construcción
+    let numSeleccion = 3;
+    const botones = document.querySelectorAll('.boton');
+    
+    botones.forEach(boton => {
+        boton.addEventListener('click', function colocar(event) {
+            if (seleccionados.length === 0) {
+                // Si no hay selección previa, cualquier celda es válida
+                agregarCelda(this, seleccionados);
+            } else {
+                // Validamos si la celda es adyacente a la última seleccionada
+                const ultima = seleccionados[seleccionados.length - 1];
+                const actual = this.getAttribute('posicion');
 
+                if (esAdyacente(ultima, actual)) {
+                    agregarCelda(this, seleccionados);
+                } else {
+                    alert('Debes colocar el barco en una celda adyacente.');
+                }
+            }
+
+            // Si el barco está completamente colocado, quitamos el evento
+            if (seleccionados.length === longitud) {
+                barcosRojos.push([...seleccionados]); // Guardamos el barco en el array principal
+                seleccionados = []; // Reiniciamos para el siguiente barco
+
+                botones.forEach(boton => boton.removeEventListener('click', colocar));
+            }
+        });
+    });
 }
+
+function agregarCelda(boton, seleccionados) {
+    const posicion = boton.getAttribute('posicion');
+    seleccionados.push(posicion);
+    boton.style.backgroundColor = 'red';
+    boton.disabled = true;
+}
+
+function esAdyacente(pos1, pos2) {
+    const [fila1, col1] = pos1.split(',').map(Number);
+    const [fila2, col2] = pos2.split(',').map(Number);
+
+    return (Math.abs(fila1 - fila2) === 1 && col1 === col2) || 
+           (Math.abs(col1 - col2) === 1 && fila1 === fila2);
+}
+
 
 
 //Comprobar si en esa posicion hay barco
