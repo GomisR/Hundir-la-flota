@@ -8,13 +8,21 @@
         <script type="text/javascript" src="./HundirLaFloraJS.js"></script>
     </head>
     <body>
+        <h1>Hundir la Flota</h1>
         <div id="infoBarcos">
             <div id="barcos2"></div>
             <div id="barcos2"></div>
             <div id="barcos2"></div>
         </div>
-        <div id="tablero"></div>
-        <button id="iniciarJuego">Iniciar Juego (Jugador Amarillo)</button>
-        <div id="turnosAmarillo"></div>
+        <div id="contenedorJuego">
+            <div id="mensajeYBotones">
+                <div id="mensajes"></div>
+                <div id="contenedorBotones">
+                    <button id="cambioTurno" class="botonJuego">Cambiar Turno</button>
+                    <button id="reset" class="botonJuego">Reiniciar</button>
+                </div>
+            </div>
+            <div id="tablero"></div>
+        </div>
     </body>
 </html>
