@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             boton.style.backgroundColor = ''; // Restablecemos el color de fondo
         });
         //Modificamos la informacion amarillo
-        const infoAmarillo = document.getElementById("turnosAmarillo");
+        const infoAmarillo = document.getElementById("mensajes");
 
     });
 });
