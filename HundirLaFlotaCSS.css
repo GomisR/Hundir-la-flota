@@ -3,15 +3,14 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     background-color: #e5e9ff;
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
 }
 
 h1 {
-    color: navy;
-    margin-bottom: 30px;
+    color: darkslateblue;
+    margin: 60px;
     font-size: 40px;
 }
 
@@ -45,7 +44,7 @@ h1 {
 }
 
 #mensajes {
-    border: 1pt solid navy;
+    border: 1pt solid darkslateblue;
     padding: 20px;
     margin: 30px;
 }
