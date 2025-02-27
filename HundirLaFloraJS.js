@@ -21,7 +21,8 @@ Mensajes de cantidad de barcos que quedan por poner/hundir(dependiendo de si fas
 
 document.addEventListener('DOMContentLoaded', function() {
     const tablero = document.getElementById('tablero');
-    let botonIniciar = document.getElementById('iniciarJuego');
+    let botonIniciar = document.getElementById('cambioTurno');
+    let botonReset = document.getElementById('reset');
     let faseColocacion = true;
     let barcosRojos = [];
     let contadorAmarillo = 0;
@@ -147,3 +148,4 @@ function comprobarCelda(barcosRojos,boton){
         boton.disabled = true;
     }
 }
+
