@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let faseColocacion = true;
     let barcosRojos = [];
     let contadorAmarillo = 0;
-    
+    let barcosPendientes = [2, 2, 2, 3, 3, 4];
+    let barcoActual = [];
+    let colocandoBarco = false;
 
     //Creamos el tablero
     for (let fila = 0; fila < 10; fila++) {
@@ -54,16 +56,16 @@ document.addEventListener('DOMContentLoaded', function() {
     botones.forEach(boton => {
         boton.addEventListener('click', function() {
             if (faseColocacion) {
-                const posicion = this.getAttribute('posicion');
-                if (!barcosRojos.includes(posicion)) { 
-                    //Añadir al array y marcar la celda
-                    barcosRojos.push(posicion);
-                    colocarBarcos(2, tablero);
-                    this.style.backgroundColor = 'red';
-                    this.disabled = true;
-                    console.log('Barcos Rojos:', barcosRojos);
+                if(barcosPendientes.length != 0){
+                    colocarBarcos(boton);
+                    botonIniciar.setAttribute("disabled",true);
+                }else{
+                    botones.disabled;
+                    botonIniciar.removeAttribute('disabled')
                 }
-            }else{//Estamos en el turno amarillo
+                
+                console.log('Barcos Rojos:', barcosRojos);
+            } else {
                 comprobarCelda(barcosRojos,boton);
                 contadorAmarillo++;
             }
@@ -84,68 +86,76 @@ document.addEventListener('DOMContentLoaded', function() {
         const infoAmarillo = document.getElementById("mensajes");
 
     });
-});
 
-function colocarBarcos(longitud, tablero) {
-    let seleccionados = []; // Guardará las posiciones del barco en construcción
-    let numSeleccion = 3;
-    const botones = document.querySelectorAll('.boton');
-    
-    botones.forEach(boton => {
-        boton.addEventListener('click', function colocar(event) {
-            if (seleccionados.length === 0) {
-                // Si no hay selección previa, cualquier celda es válida
-                agregarCelda(this, seleccionados);
+    function colocarBarcos(boton) {
+        const posicion = boton.getAttribute('posicion');
+        if (!colocandoBarco) {
+            //Inicio del barco
+            barcoActual = [posicion];
+            colocandoBarco = true;
+            boton.style.backgroundColor = 'red';
+            boton.disabled = true;
+            actualizarMensaje(`Coloca el resto del barco en celdas adyacentes (${barcosPendientes[0]} espacios en total).`);
+        } else {
+            //Comprobamos si es adyacente
+            const ultimaPos = barcoActual[barcoActual.length - 1];
+            if (esAdyacente(ultimaPos, posicion)) {
+                barcoActual.push(posicion);
+                boton.style.backgroundColor = 'red';
+                boton.disabled = true;
             } else {
-                // Validamos si la celda es adyacente a la última seleccionada
-                const ultima = seleccionados[seleccionados.length - 1];
-                const actual = this.getAttribute('posicion');
-
-                if (esAdyacente(ultima, actual)) {
-                    agregarCelda(this, seleccionados);
-                } else {
-                    alert('Debes colocar el barco en una celda adyacente.');
-                }
+                alert('Solo puedes colocar el barco en una celda adyacente.');
+                return;
             }
+        }
 
-            // Si el barco está completamente colocado, quitamos el evento
-            if (seleccionados.length === longitud) {
-                barcosRojos.push([...seleccionados]); // Guardamos el barco en el array principal
-                seleccionados = []; // Reiniciamos para el siguiente barco
+        if (barcoActual.length === barcosPendientes[0]) {
+            barcosRojos.push([...barcoActual]);
+            barcosPendientes.shift();
+            barcoActual = [];
+            colocandoBarco = false;
 
-                botones.forEach(boton => boton.removeEventListener('click', colocar));
+            if (barcosPendientes.length === 0) {
+                actualizarMensaje("Ha colocado todos los barcos hora de esconderse.");
+            } else {
+                actualizarMensaje(`Coloca un barco de ${barcosPendientes[0]} casillas.`);
             }
-        });
-    });
-}
-
-function agregarCelda(boton, seleccionados) {
-    const posicion = boton.getAttribute('posicion');
-    seleccionados.push(posicion);
-    boton.style.backgroundColor = 'red';
-    boton.disabled = true;
-}
-
-function esAdyacente(pos1, pos2) {
-    const [fila1, col1] = pos1.split(',').map(Number);
-    const [fila2, col2] = pos2.split(',').map(Number);
-
-    return (Math.abs(fila1 - fila2) === 1 && col1 === col2) || 
-           (Math.abs(col1 - col2) === 1 && fila1 === fila2);
-}
-
-
-
-//Comprobar si en esa posicion hay barco
-function comprobarCelda(barcosRojos,boton){
-    const posicion = boton.getAttribute('posicion');
-    if (barcosRojos.includes(posicion)) { 
-        //marcar la celda
-        boton.style.backgroundColor = 'orange';
-        boton.disabled = true;
-    }else{
-        boton.style.backgroundColor = 'blue';
-        boton.disabled = true;
+        }
     }
-}
+});
+    function esAdyacente(pos1, pos2) {
+        const [fila1, col1] = pos1.split(',').map(Number);
+        const [fila2, col2] = pos2.split(',').map(Number);
 
+        return (Math.abs(fila1 - fila2) === 1 && col1 === col2) || 
+            (Math.abs(col1 - col2) === 1 && fila1 === fila2);
+    }
+
+
+
+    //Comprobar si en esa posicion hay barco
+    function comprobarCelda(barcosRojos,boton){
+        const posicion = boton.getAttribute('posicion');
+        let tocado = false;
+
+    // Verificar si la posición pertenece a un barco
+        for (let barco of barcosRojos) {
+            if (barco.includes(posicion)) {
+                tocado = true;
+                break;
+            }
+        }
+        if (tocado) { 
+            //marcar la celda
+            boton.style.backgroundColor = 'orange';
+            boton.disabled = true;
+        }else{
+            boton.style.backgroundColor = 'blue';
+            boton.disabled = true;
+        }
+    }
+
+    //Sacar mensajes por pantalla para informar al usuario
+    function actualizarMensaje(mensaje) {
+        document.getElementById('mensajes').innerText = mensaje;
+    }
