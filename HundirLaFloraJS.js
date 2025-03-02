@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let barcosRojos = [];
     let contadorAmarillo = 0;
     let barcosPendientes = [2, 2, 2, 3, 3, 4];
+    let contadorBarcos = 0;
     let barcoActual = [];
     let colocandoBarco = false;
 
@@ -35,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
     botonIniciar.disabled = true;
 
     //Creamos el tablero
+
+    
     for (let fila = 0; fila < 10; fila++) {
         for (let col = 0; col < 10; col++) {
             //Contenedores 
@@ -128,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //Reiniciar el juego
     botonReset.addEventListener('click', function(){
         faseColocacion = true;
+        contadorBarcos = 0;
         barcosRojos = [];
         contadorAmarillo = 0;
         barcosPendientes = [2, 2, 2, 3, 3, 4];
@@ -189,6 +193,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     botonClicado.disabled = true;
                 });
                 actualizarMensaje("¡Has hundido un barco!");
+                contadorBarcos++;
+                comprobarGanador();
             } else {
                 actualizarMensaje("¡Barco tocado!");
             }
@@ -211,4 +217,94 @@ document.addEventListener('DOMContentLoaded', function() {
         const contador = document.getElementById('contador');
         contador.innerHTML = `<p>Número de clicks: ${contadorAmarillo}</p>`;
     }
+    function comprobarGanador() {
+        console.log(contadorBarcos);
+        console.log("Longitud barcos: "+barcosRojos.length);
+        // Comprobar si hay un ganador (todos los barcos hundidos)
+        if (contadorBarcos == barcosRojos.length) {
+            alert("¡Felicidades! Has hundido todos los barcos. ¡Eres el ganador!");
+    
+        } else {
+            const barcosRestantes = barcosRojos.length - contadorBarcos;
+            actualizarMensaje(`Quedan ${barcosRestantes} barcos por hundir.`);
+        }
+    }
 });
+
+
+    //Comprobar si en esa posicion hay barco
+    function comprobarCelda(barcosRojos, boton) {
+        const posicion = boton.getAttribute('posicion');
+        let tocado = false;
+        let barcoImpactado = null;
+
+        // Verificar si la posición impactada pertenece a algún barco
+        for (let barco of barcosRojos) {
+            if (barco.includes(posicion)) {
+                tocado = true;
+                barcoImpactado = barco;
+                break;
+            }
+        }
+
+        if (tocado) {
+            // Marcamos la celda impactada
+            boton.style.backgroundColor = 'orange';
+            boton.disabled = true;
+
+            // Comprobamos si todas las celdas del barco han sido tocadas
+            let hundido = true;
+            for (let pos of barcoImpactado) {
+                const botonCorrespondiente = document.querySelector(`button[posicion='${pos}']`);
+                if (botonCorrespondiente.style.backgroundColor !== 'orange' && botonCorrespondiente.style.backgroundColor !== 'red') {
+                    hundido = false;
+                    break;
+                }
+            }
+
+            if (hundido) {
+                // Barco hundido, lo marcamos en rojo
+                barcoImpactado.forEach(pos => {
+                    const botonClicado = document.querySelector(`button[posicion='${pos}']`);
+                    botonClicado.style.backgroundColor = 'red';
+                    botonClicado.disabled = true;
+                });
+                actualizarMensaje("¡Has hundido un barco!");
+                contadorBarcos++;
+                comprobarGanador();
+            } else {
+                actualizarMensaje("¡Barco tocado!");
+            }
+        } else {
+            boton.style.backgroundColor = 'blue';
+            actualizarMensaje("Le diste al agua... Intenta de nuevo.");
+        }
+
+        // Deshabilitar el botón después del disparo
+        boton.disabled = true;
+    }
+
+
+    //Sacar mensajes por pantalla para informar al usuario
+    function actualizarMensaje(mensaje) {
+        document.getElementById('mensajes').innerText = mensaje;
+    }
+
+    function actualizarContador() {
+        const contador = document.getElementById('contador');
+        contador.innerHTML = `<p>Número de clicks: ${contadorAmarillo}</p>`;
+    }
+    function comprobarGanador() {
+        console.log(contadorBarcos);
+        console.log("Longitud barcos: "+barcosRojos.length);
+        // Comprobar si hay un ganador (todos los barcos hundidos)
+        if (contadorBarcos == barcosRojos.length) {
+            alert("¡Felicidades! Has hundido todos los barcos. ¡Eres el ganador!");
+    
+        } else {
+            const barcosRestantes = barcosRojos.length - contadorBarcos;
+            actualizarMensaje(`Quedan ${barcosRestantes} barcos por hundir.`);
+        }
+    }
+});
+
