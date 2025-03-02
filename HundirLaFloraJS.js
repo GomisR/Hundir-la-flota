@@ -1,3 +1,5 @@
+
+
 /*
 IDEA DE JUEGO: 
 Turno rojo:
@@ -306,5 +308,4 @@ document.addEventListener('DOMContentLoaded', function() {
             actualizarMensaje(`Quedan ${barcosRestantes} barcos por hundir.`);
         }
     }
-});
 
