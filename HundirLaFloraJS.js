@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
+ 
     //Reiniciar el juego
     botonReset.addEventListener('click', function(){
         faseColocacion = true;
