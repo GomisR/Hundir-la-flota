@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let barcoActual = [];
     let colocandoBarco = false;
 
+
+    //Deshabilitamos desde el principio el boton
+    botonIniciar.disabled = true;
+
     //Creamos el tablero
     for (let fila = 0; fila < 10; fila++) {
         for (let col = 0; col < 10; col++) {
@@ -58,16 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (faseColocacion) {
                 if(barcosPendientes.length != 0){
                     colocarBarcos(boton);
-                    botonIniciar.setAttribute("disabled",true);
                 }else{
                     botones.disabled;
-                    botonIniciar.removeAttribute('disabled')
                 }
                 
                 console.log('Barcos Rojos:', barcosRojos);
             } else {
                 comprobarCelda(barcosRojos,boton);
                 contadorAmarillo++;
+                actualizarContador();  // Actualizamos clicks
             }
         });
     });
@@ -76,15 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
     botonIniciar.addEventListener('click', function() {
         faseColocacion = false;
         alert('Amarillo, es tu momento. Hora de acabar con los rojos!');
+
         // Restauramos el estado de los botones
         const botones = document.querySelectorAll('.boton');
         botones.forEach(boton => {
             boton.disabled = false; // Reactivamos el botón
             boton.style.backgroundColor = ''; // Restablecemos el color de fondo
         });
-        //Modificamos la informacion amarillo
-        const infoAmarillo = document.getElementById("mensajes");
-
     });
 
     function colocarBarcos(boton) {
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (barcosPendientes.length === 0) {
                 actualizarMensaje("Ha colocado todos los barcos hora de esconderse.");
-                botonIniciar.removeAttribute('disabled');
+                botonIniciar.disabled = false; //Habilitar cambio de turno
             } else {
                 actualizarMensaje(`Coloca un barco de ${barcosPendientes[0]} casillas.`);
             }
@@ -136,9 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
             boton.disabled = false; // Reactivamos el botón
             boton.style.backgroundColor = ''; // Restablecemos el color de fondo
         })
+        contadorAmarillo = 0;
+        actualizarContador();
         actualizarMensaje(`Coloca un barco de ${barcosPendientes[0]} casillas.`);
     });
-});
+
     function esAdyacente(pos1, pos2) {
         const [fila1, col1] = pos1.split(',').map(Number);
         const [fila2, col2] = pos2.split(',').map(Number);
@@ -148,30 +151,64 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-
     //Comprobar si en esa posicion hay barco
-    function comprobarCelda(barcosRojos,boton){
+    function comprobarCelda(barcosRojos, boton) {
         const posicion = boton.getAttribute('posicion');
         let tocado = false;
+        let barcoImpactado = null;
 
-    // Verificar si la posición pertenece a un barco
+        // Verificar si la posición impactada pertenece a algún barco
         for (let barco of barcosRojos) {
             if (barco.includes(posicion)) {
                 tocado = true;
+                barcoImpactado = barco;
                 break;
             }
         }
-        if (tocado) { 
-            //marcar la celda
+
+        if (tocado) {
+            // Marcamos la celda impactada
             boton.style.backgroundColor = 'orange';
             boton.disabled = true;
-        }else{
+
+            // Comprobamos si todas las celdas del barco han sido tocadas
+            let hundido = true;
+            for (let pos of barcoImpactado) {
+                const botonCorrespondiente = document.querySelector(`button[posicion='${pos}']`);
+                if (botonCorrespondiente.style.backgroundColor !== 'orange' && botonCorrespondiente.style.backgroundColor !== 'red') {
+                    hundido = false;
+                    break;
+                }
+            }
+
+            if (hundido) {
+                // Barco hundido, lo marcamos en rojo
+                barcoImpactado.forEach(pos => {
+                    const botonClicado = document.querySelector(`button[posicion='${pos}']`);
+                    botonClicado.style.backgroundColor = 'red';
+                    botonClicado.disabled = true;
+                });
+                actualizarMensaje("¡Has hundido un barco!");
+            } else {
+                actualizarMensaje("¡Barco tocado!");
+            }
+        } else {
             boton.style.backgroundColor = 'blue';
-            boton.disabled = true;
+            actualizarMensaje("Le diste al agua... Intenta de nuevo.");
         }
+
+        // Deshabilitar el botón después del disparo
+        boton.disabled = true;
     }
+
 
     //Sacar mensajes por pantalla para informar al usuario
     function actualizarMensaje(mensaje) {
         document.getElementById('mensajes').innerText = mensaje;
     }
+
+    function actualizarContador() {
+        const contador = document.getElementById('contador');
+        contador.innerHTML = `<p>Número de clicks: ${contadorAmarillo}</p>`;
+    }
+});
