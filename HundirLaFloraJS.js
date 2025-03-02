@@ -122,6 +122,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    //Reiniciar el juego
+    botonReset.addEventListener('click', function(){
+        faseColocacion = true;
+        barcosRojos = [];
+        contadorAmarillo = 0;
+        barcosPendientes = [2, 2, 2, 3, 3, 4];
+        barcoActual = [];
+        colocandoBarco = false;
+        botones.forEach(boton => {
+            boton.disabled = false; // Reactivamos el botón
+            boton.style.backgroundColor = ''; // Restablecemos el color de fondo
+        })
+        actualizarMensaje(`Coloca un barco de ${barcosPendientes[0]} casillas.`);
+    });
 });
     function esAdyacente(pos1, pos2) {
         const [fila1, col1] = pos1.split(',').map(Number);
