@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     botonIniciar.setAttribute("disabled",true);
                 }else{
                     botones.disabled;
-                    botonIniciar.removeAttribute('disabled');
+                    botonIniciar.removeAttribute('disabled')
                 }
                 
                 console.log('Barcos Rojos:', barcosRojos);
