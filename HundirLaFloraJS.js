@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (barcosPendientes.length === 0) {
                 actualizarMensaje("Ha colocado todos los barcos hora de esconderse.");
+                botonIniciar.removeAttribute('disabled');
             } else {
                 actualizarMensaje(`Coloca un barco de ${barcosPendientes[0]} casillas.`);
             }
